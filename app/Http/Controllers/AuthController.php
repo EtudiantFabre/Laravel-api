@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        //validate fields
         $attrs = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed'
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required'
         ]);
-
+        
         //create user
         $user = User::create([
             'name' => $attrs['name'],
@@ -23,10 +23,9 @@ class AuthController extends Controller
             'password' => bcrypt($attrs['password']),
         ]);
 
-        //return user & token in response
         return response([
             'user' => $user,
-            'token' => $user->createToken(secret)-> plainTextToken
+            'token' => $user->createToken('secret')->plainTextToken
         ], 200);
     }
 
@@ -34,8 +33,8 @@ class AuthController extends Controller
     {
         //validate fields
         $attrs = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
+            'email' => 'required',
+            'password' => 'required'
         ]);
 
         if (!Auth::attempt($attrs)) {
@@ -56,4 +55,32 @@ class AuthController extends Controller
             'message' => 'Logout successfully!'
         ], 200);
     }
+
+    public function user()
+    {
+        return response(['user' => auth()->user()], 200);
+    }
+
+    public function update(Request $request)
+    {
+        $attrs = $request->validate([
+            'name' => 'required'
+        ]);
+        //dd(["ici"]);
+
+        auth()->user()->update([
+            'name' => $attrs['name'],
+            //'image' => $image
+        ]);
+
+        return response([
+            'message' => 'User updated.',
+            'user' => auth()->user()
+        ], 200);
+    }
+    public function getUser()
+    {
+        
+    }
+
 }
