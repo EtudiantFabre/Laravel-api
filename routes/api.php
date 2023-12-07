@@ -16,15 +16,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Exemples de routes pour les différents rôles
+    Route::middleware('role:admin,responsable')->group(function () {
+        Route::put('/posts/{id}', [PostController::class, 'update']);
+        Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+    });
     Route::middleware('role:admin')->group(function () {
         Route::get('/posts', [PostController::class, 'index']);
-    });
-
-    Route::middleware('role:responsable')->group(function () {
-        Route::post('/posts/{id}/update', [PostController::class, 'update']);
-    });
-
-    Route::middleware('role:client')->group(function () {
-        Route::delete('/posts/{id}/delete', [PostController::class, 'destroy']);
     });
 });

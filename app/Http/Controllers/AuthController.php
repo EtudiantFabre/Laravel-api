@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -22,6 +23,7 @@ class AuthController extends Controller
             'email' => $attrs['email'],
             'password' => bcrypt($attrs['password']),
         ]);
+        $user->assignRole(Role::find(2)->name);
 
         return response([
             'user' => $user,
@@ -58,7 +60,7 @@ class AuthController extends Controller
 
     public function user()
     {
-        return response(['user' => auth()->user()], 200);
+        return response(['user' => auth()->user(), 'role' => auth()->user()->getPermissionsViaRoles()], 200);
     }
 
     public function update(Request $request)

@@ -41,14 +41,24 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $id)
     {
-        //
+        $post = Post::find($id);
+        if ($post) {
+            return response()->json(['message' => 'Post updated'], 200);
+        }
+        return response()->json(['message' => 'Post not found.'], 404);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $id)
+    public function destroy($id)
     {
-        
+        $post = Post::find($id);
+
+        if ($post) {
+            $post->delete();
+            return response()->json(['message' => 'Post deleted successfully'], 200);
+        }
+        return response()->json(['message' => 'Post not found'], 404);
     }
 }
